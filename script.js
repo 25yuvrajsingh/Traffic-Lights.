@@ -11,11 +11,13 @@ document.addEventListener('DOMContentLoaded', function () {
         B: document.getElementById('signalB'),
         C: document.getElementById('signalC'),
         D: document.getElementById('signalD')
+        
     };
 
     let intervalId;
 
     function validateInputs() {
+        
         const sequence = sequenceInput.value.split(',');
         const greenInterval = parseInt(greenInput.value) * 1000;
         const yellowInterval = parseInt(yellowInput.value) * 1000;
@@ -28,36 +30,42 @@ document.addEventListener('DOMContentLoaded', function () {
         return { sequence, greenInterval, yellowInterval };
     }
 
-    // Save data to the server
+    // Saving  data to server
+    
     function saveData() {
         const data = validateInputs();
         if (!data) return;
 
         fetch('/save', {
+            
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 sequence: sequenceInput.value,
                 yellowInterval: yellowInput.value,
                 greenInterval: greenInput.value
             })
+            
         })
         .then(response => response.json())
         .then(data => console.log('Data saved successfully:', data))
         .catch(err => console.error('Error:', err));
     }
 
-    // Load data from the server
+    // Loading  data from the server
+    
     function loadData() {
         fetch('/load')
             .then(response => response.json())
             .then(data => {
                 if (data) {
+                    
                     sequenceInput.value = data.sequence;
                     yellowInput.value = data.yellow_interval;
-                    greenInput.value = data.green_interval;
+                  greenInput.value = data.green_interval;
                 }
             })
+            
             .catch(err => console.error('Error:', err));
     }
 
@@ -68,14 +76,14 @@ document.addEventListener('DOMContentLoaded', function () {
         let currentSignalIndex = 0;
 
         function changeSignal() {
-            Object.keys(signals).forEach(sig => signals[sig].className = 'signal red');
+         Object.keys(signals).forEach(sig => signals[sig].className = 'signal red');
 
             const currentSignal = sequence[currentSignalIndex];
-            signals[currentSignal].className = 'signal green';
+             signals[currentSignal].className = 'signal green';
 
             setTimeout(() => {
                 signals[currentSignal].className = 'signal yellow';
-            }, greenInterval - yellowInterval);
+            },  greenInterval - yellowInterval);
 
             currentSignalIndex = (currentSignalIndex + 1) % sequence.length;
         }
@@ -85,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function stopSignals() {
+        
         if (intervalId) {
             clearInterval(intervalId);
             intervalId = null;
@@ -100,4 +109,5 @@ document.addEventListener('DOMContentLoaded', function () {
     stopButton.addEventListener('click', stopSignals);
 
     loadData();
+    
 });
